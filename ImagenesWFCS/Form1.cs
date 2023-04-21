@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,7 +26,7 @@ namespace ImagenesWFCS
             InitializeComponent();
             imagenes = Directory.GetFiles(@"C:\Users\andre\OneDrive\Imágenes\Survival Java");  
             index = 0;
-           
+            this.KeyPreview = true;
         }
 
         public void btnBrowse_Click(object sender, EventArgs e)
@@ -35,28 +36,15 @@ namespace ImagenesWFCS
             if (dialog.ShowDialog() == DialogResult.OK ) 
             {
                 pictureBox1.Image = new Bitmap(dialog.FileName);
-                pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-                pictureBox1.Focus();
             }
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            /*if(e.KeyCode == Keys.A)
-            {
-                Label label;
-                label = new Label();
-                label.BackColor = Color.Red;
-                label.Size = new Size(300, 300);
-                label.Location = new Point(200, 200);
-                this.Controls.Add(label);
-                pictureBox1.SendToBack();
-            }*/
             
-
             switch (e.KeyCode)
             {
-                case Keys.A:
+                case Keys.Left:
                     if (index == null)
                     {
                         index = 0;
@@ -73,7 +61,7 @@ namespace ImagenesWFCS
                         pictureBox1.Image = Image.FromFile(imagenes[index]);
                     }
                  break;
-                case Keys.D:
+                case Keys.Right:
                     if (index == null)
                     {
                         index = 0;
@@ -90,6 +78,10 @@ namespace ImagenesWFCS
                         pictureBox1.Image = Image.FromFile(imagenes[index]);
                     }
                     break;
+                    case Keys.Escape:
+                    this.FormBorderStyle = FormBorderStyle.Sizable;
+                    btnBrowse.Visible = true;
+                    break;
             }
                   
             
@@ -97,29 +89,19 @@ namespace ImagenesWFCS
 
         public void pictureBox1_DoubleClick(object sender, EventArgs e)
         {
-            fullScreenForm = new Form();
-            fullScreenForm.Name = "fullScreenForm";
-            fullScreenForm.WindowState = FormWindowState.Maximized;
-            fullScreenForm.FormBorderStyle = FormBorderStyle.None;
-            fullScreenForm.BackColor = Color.Black;
-            fullScreenForm.KeyPreview = true;
-            fullScreenForm.KeyDown += FullScreenForm_KeyDown;
-
-            PictureBox fullScreenPictureBox = new PictureBox();
-            fullScreenPictureBox.Dock = DockStyle.Fill;
-            fullScreenPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            fullScreenPictureBox.Image = pictureBox1.Image;
-
-            fullScreenForm.Controls.Add(fullScreenPictureBox);
-
-            fullScreenForm.ShowDialog();
+            this.WindowState = FormWindowState.Maximized;
+            this.FormBorderStyle = FormBorderStyle.None;
+            btnBrowse.Visible = false;
         }
 
-        private void FullScreenForm_KeyDown(object sender, KeyEventArgs e)
+        private void btnBrowse_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape)
+            switch(e.KeyCode)
             {
-                fullScreenForm.Close();
+                case Keys.Left:
+                    case Keys.Right:
+                    e.IsInputKey = true;
+                    break;
             }
         }
     }
